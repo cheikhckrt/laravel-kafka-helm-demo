@@ -1,0 +1,48 @@
+{{- if .Values.laravel.enabled }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: dev
+  name: laravel
+spec:
+  replicas: {{ .Values.laravel.replicas }}
+  selector:
+    matchLabels:
+      app: laravel
+  template:
+    metadata:
+      labels:
+        app: laravel
+    spec:
+      containers:
+      - name: laravel
+        image: {{ .Values.laravel.image.repository }}:{{ .Values.laravel.image.tag }}  
+        command:
+        - /bin/sh
+        - -c
+        - |
+          echo "[www]
+          listen = 0.0.0.0:9000
+          user = www-data
+          group = www-data
+          pm = dynamic
+          pm.max_children = 5
+          pm.start_servers = 2
+          pm.min_spare_servers = 1
+          pm.max_spare_servers = 3" > /usr/local/etc/php-fpm.d/www.conf;
+          php-fpm --nodaemonize
+        ports:
+        - containerPort: 9000
+          protocol: TCP
+          name: http
+        volumeMounts:
+        - name: app-code
+          mountPath: /var/www/html
+        envFrom:
+        - configMapRef:
+            name: laravel-config-env
+      volumes:
+      - name: app-code
+        hostPath:
+          path: {{ .Values.laravel.pathSrc }}
+{{- end }}

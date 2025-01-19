@@ -1,0 +1,32 @@
+{{- if .Values.ingress.enabled }}
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: laravel-ingress
+  namespace: dev
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+spec:
+  rules:
+    # - host: {{ .Values.ingress.frontendHost }}
+    #   http:
+    #     paths:
+    #       - path: /
+    #         pathType: Prefix
+    #         backend:
+    #           service:
+    #             name: frontend
+    #             port:
+    #               number: 3000
+    - host: {{ .Values.ingress.backendHost }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: laravel-service
+                port:
+                  number: 9000
+{{- end }}

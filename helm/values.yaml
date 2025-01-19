@@ -1,0 +1,36 @@
+nameOverride: ""
+fullnameOverride: ""
+
+ingress:
+  enabled: true
+  className: ""
+  annotations: {}
+  frontendHost: frontend.test.com
+  backendHost: api.test.com
+
+laravel:
+  enabled: true
+  className: ""
+  annotations: {}
+  replicas: 1
+  pathSrc: /home/cba/projet/laravel-helm-mongo-cluster-demo/backend
+  image:
+    repository: cheikhckrt/custom-laravel
+    tag: 8.3.3
+
+frontend:
+  enabled: false
+  image: my-frontend:latest
+  replicas: 1
+
+kafka:
+  enabled: true
+  image: bitnami/kafka:latest
+  replicas: 3
+  storage:
+    size: 10Gi
+  service:
+    port: 9092
+  kraftMode: true
+
+
